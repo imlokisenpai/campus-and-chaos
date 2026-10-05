@@ -1,0 +1,822 @@
+@use "variables" as *;
+
+// =============================================================
+//  Film photography treatment
+//  Every photo gets: warm grade, vignette, grain, light leak.
+// =============================================================
+.film {
+  position: relative;
+  overflow: hidden;
+  background: $paper-deep;
+  border-radius: $radius;
+  isolation: isolate;
+}
+
+.film img,
+.film video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.9) contrast(1.04) sepia(0.14) brightness(1.02);
+  transition: filter 600ms $ease-paper, transform 700ms $ease-paper;
+}
+
+// Vignette
+.film::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 78% 72% at 50% 46%,
+    transparent 42%,
+    rgba(58, 42, 22, 0.14) 74%,
+    $vignette 100%
+  );
+  mix-blend-mode: multiply;
+}
+
+// Grain (inner, so it sits on top of the image only)
+.film--grain::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)' opacity='0.55'/%3E%3C/svg%3E");
+  animation: grain-drift 7s steps(6) infinite;
+}
+
+// Warm light leak from the top-left
+.film--leak::before {
+  background:
+    radial-gradient(ellipse 60% 40% at 8% -5%, $lightleak, transparent 65%),
+    radial-gradient(ellipse 40% 30% at 100% 108%, rgba(255, 214, 150, 0.16), transparent 70%);
+}
+
+.film--leak { overflow: hidden; }
+
+@keyframes grain-drift {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-3%, 2%); }
+  40%  { transform: translate(2%, -3%); }
+  60%  { transform: translate(-2%, -2%); }
+  80%  { transform: translate(3%, 1%); }
+  100% { transform: translate(0, 0); }
+}
+
+// =============================================================
+//  Polaroid
+// =============================================================
+.polaroid {
+  position: relative;
+  display: block;
+  background: $film-white;
+  padding: 0.72rem 0.72rem 0;
+  box-shadow:
+    0 1px 2px rgba(64, 52, 34, 0.14),
+    0 8px 20px -6px $film-shadow,
+    0 20px 40px -18px rgba(64, 52, 34, 0.3);
+  transition: transform 420ms $ease-paper, box-shadow 420ms $ease-paper;
+  text-decoration: none;
+  color: inherit;
+}
+
+.polaroid__frame {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: $paper-deep;
+}
+
+// The thicker bottom border, like a real print
+.polaroid__cap {
+  padding: 0.72rem 0.35rem 0.85rem;
+  font-family: $font-hand;
+  font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.3rem);
+  line-height: 1.15;
+  color: $ink;
+  text-align: center;
+  word-break: break-word;
+}
+
+.polaroid:hover {
+  transform: translateY(-6px) rotate(var(--tilt, 0deg)) scale(1.015);
+  box-shadow:
+    0 2px 4px rgba(64, 52, 34, 0.16),
+    0 16px 32px -8px rgba(64, 52, 34, 0.36),
+    0 40px 60px -24px rgba(64, 52, 34, 0.4);
+  color: inherit;
+}
+
+.polaroid:hover .film img { transform: scale(1.05); }
+
+// Slight tilt, like photos tossed on a desk
+.polaroid--tilt-l { --tilt: -2.4deg; }
+.polaroid--tilt-r { --tilt: 2.1deg; }
+.polaroid--tilt-lb { --tilt: -1.3deg; }
+.polaroid--tilt-rb { --tilt: 1.6deg; }
+
+// =============================================================
+//  Tape strips
+// =============================================================
+.tape {
+  position: absolute;
+  z-index: 6;
+  width: clamp(56px, 14%, 92px);
+  height: clamp(18px, 4.6%, 26px);
+  background: $tape;
+  border-left: 1px solid $tape-edge;
+  border-right: 1px solid $tape-edge;
+  box-shadow: 0 1px 3px rgba(120, 100, 60, 0.16);
+  pointer-events: none;
+
+  // torn ends
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    background: inherit;
+    -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent);
+    mask-image: linear-gradient(180deg, #000 62%, transparent);
+  }
+  &::before { left: -4px; transform: rotate(180deg); }
+  &::after  { right: -4px; }
+}
+
+.tape--tl { top: -11px; left: -14px; transform: rotate(-38deg); }
+.tape--tr { top: -11px; right: -14px; transform: rotate(38deg); }
+.tape--bl { bottom: 34px; left: -16px; transform: rotate(-28deg); }
+.tape--br { bottom: 34px; right: -16px; transform: rotate(30deg); }
+
+// =============================================================
+//  Camera date-back stamp
+// =============================================================
+.dateback {
+  position: absolute;
+  z-index: 6;
+  bottom: 8px;
+  right: 9px;
+  padding: 0.16em 0.45em;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: clamp(0.5rem, 0.44rem + 0.24vw, 0.68rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #ff8a4a;
+  background: rgba(28, 12, 4, 0.62);
+  border-radius: 2px;
+  text-shadow: 0 0 5px rgba(255, 138, 74, 0.85);
+  opacity: 0.9;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+// =============================================================
+//  Handwritten annotations
+// =============================================================
+.hand {
+  font-family: $font-hand;
+  line-height: 1.22;
+  color: $ink;
+  letter-spacing: 0.005em;
+}
+
+.annotation {
+  position: absolute;
+  z-index: 7;
+  font-family: $font-hand;
+  font-size: clamp(1.05rem, 0.95rem + 0.75vw, 1.65rem);
+  line-height: 1.15;
+  color: $ink;
+  pointer-events: none;
+  max-width: 14ch;
+  text-shadow: 0 1px 0 rgba(255, 252, 240, 0.55);
+}
+
+.annotation--red  { color: $accent; }
+.annotation--blue { color: #46607a; }
+.annotation--gold { color: $gold; }
+
+.annotation--tl { top: -1.1em; left: 0.2em; transform: rotate(-5deg); }
+.annotation--tr { top: -1.2em; right: 0.6em; transform: rotate(4deg); text-align: right; }
+.annotation--bl { bottom: -1.4em; left: 1.2em; transform: rotate(-3.4deg); }
+.annotation--br { bottom: -1.5em; right: 0.4em; transform: rotate(2.6deg); text-align: right; }
+
+// Arrow squiggle pointing at a photo
+.squiggle {
+  position: absolute;
+  z-index: 7;
+  width: clamp(38px, 8vw, 62px);
+  height: auto;
+  color: $accent;
+  opacity: 0.85;
+  pointer-events: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+// Underline scribble for headings
+.scribble-underline {
+  position: relative;
+  display: inline-block;
+}
+.scribble-underline::after {
+  content: "";
+  position: absolute;
+  left: -2%;
+  right: -2%;
+  bottom: -0.14em;
+  height: 0.34em;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M2 9 C 30 3, 58 12, 92 7 S 158 2, 198 8' fill='none' stroke='%23b04326' stroke-width='3' stroke-linecap='round' opacity='0.6'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+// =============================================================
+//  Yearbook "sticker" label
+// =============================================================
+.sticker {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: $track-medium;
+  text-transform: uppercase;
+  color: $ink;
+  background: $paper-light;
+  border: 1.5px solid $ink;
+  padding: 0.3em 0.7em;
+  box-shadow: 2px 2px 0 rgba(42, 38, 33, 0.16);
+  transform: rotate(-2.2deg);
+  white-space: nowrap;
+}
+
+.sticker--red  { color: $paper-light; background: $accent; border-color: $accent-deep; }
+.sticker--gold { color: $ink; background: #e6c15c; border-color: #a8801f; }
+.sticker--flat { transform: none; }
+
+// =============================================================
+//  Post-it note (for a friend "signing" a memory)
+// =============================================================
+.postit {
+  background: #f6e08a;
+  background-image:
+    linear-gradient(160deg, rgba(255,255,255,0.34), transparent 55%);
+  padding: 1.1rem 1.15rem 1.2rem;
+  box-shadow: 0 8px 18px -8px rgba(96, 80, 40, 0.45);
+  transform: rotate(-1.8deg);
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 7px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.09), transparent);
+  }
+
+  p { margin: 0 0 0.5rem; font-family: $font-hand; font-size: 1.3rem; line-height: 1.25; }
+  p:last-child { margin-bottom: 0; }
+}
+
+.postit--pink { background: #f2c3cd; }
+.postit--blue { background: #bcd4e0; transform: rotate(2.1deg); }
+.postit--mint { background: #c6ddc0; transform: rotate(-2.6deg); }
+
+// =============================================================
+//  Buttons & links
+// =============================================================
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: $track-wide;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: $ink;
+  background: $paper-light;
+  border: 1.5px solid $ink;
+  padding: 0.72em 1.35em;
+  box-shadow: 3px 3px 0 rgba(42, 38, 33, 0.18);
+  transition: transform 200ms $ease-paper, box-shadow 200ms $ease-paper,
+              background $speed $ease-paper, color $speed $ease-paper;
+}
+
+.btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 rgba(42, 38, 33, 0.18);
+  background: $ink;
+  color: $paper-light;
+}
+
+.btn--solid { background: $accent; border-color: $accent-deep; color: $paper-light; }
+.btn--solid:hover { background: $ink; border-color: $ink; color: $paper-light; }
+
+.btn--sm { padding: 0.5em 0.95em; font-size: 0.64rem; box-shadow: 2px 2px 0 rgba(42,38,33,0.18); }
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 1.75rem;
+}
+
+// Hand-drawn style text link
+.doodle-link {
+  position: relative;
+  font-family: $font-hand;
+  font-size: 1.3rem;
+  text-decoration: none;
+  color: $accent;
+  white-space: nowrap;
+}
+.doodle-link::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -0.1em;
+  height: 0.22em;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'%3E%3Cpath d='M1 5 C 22 1, 44 7, 70 3.5 S 104 2, 119 5' fill='none' stroke='%23b04326' stroke-width='2.4' stroke-linecap='round' opacity='0.7'/%3E%3C/svg%3E");
+  transition: transform $speed $ease-paper, opacity $speed $ease-paper;
+  transform-origin: left;
+}
+.doodle-link:hover::after { transform: scaleX(1.06); opacity: 1; }
+
+// =============================================================
+//  Memory card (grid item)
+// =============================================================
+.grid-memories {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 236px), 1fr));
+  gap: clamp(1.9rem, 4vw, 3.1rem) clamp(1.5rem, 3vw, 2.4rem);
+  align-items: start;
+}
+
+.grid-memories > li { list-style: none; }
+
+.card {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 420ms $ease-paper;
+}
+.card:hover { color: inherit; transform: translateY(-5px); }
+
+.card__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid $rule;
+  box-shadow: 0 6px 18px -8px $film-shadow;
+  background: $paper-deep;
+}
+
+.card:hover .card__media { box-shadow: 0 14px 30px -10px $film-shadow; }
+
+.card__meta { margin-top: 0.95rem; }
+
+.card__section {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: $accent;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.card__title {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 1.18rem;
+  line-height: 1.24;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.01em;
+}
+.card:hover .card__title { color: $accent; }
+
+.card__date {
+  font-size: 0.72rem;
+  letter-spacing: $track-medium;
+  color: $ink-faint;
+  text-transform: uppercase;
+}
+
+.card__badge {
+  position: absolute;
+  top: -10px;
+  right: -8px;
+  z-index: 6;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $paper-light;
+  background: $accent;
+  border: 1.5px solid $paper-light;
+  padding: 0.24em 0.5em;
+  box-shadow: 2px 2px 0 rgba(42, 38, 33, 0.2);
+  transform: rotate(3.5deg);
+}
+.card__badge--video { background: $college-green; }
+
+// =============================================================
+//  Yearbook chapter divider
+// =============================================================
+.chapter {
+  position: relative;
+  margin-block: clamp(3rem, 8vw, 5.5rem) clamp(2rem, 5vw, 3.25rem);
+  text-align: center;
+}
+
+.chapter__num {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: clamp(3.4rem, 2rem + 7vw, 7rem);
+  line-height: 0.86;
+  color: transparent;
+  -webkit-text-stroke: 1.4px rgba(184, 73, 42, 0.42);
+  letter-spacing: -0.04em;
+  margin-bottom: 0.15em;
+}
+
+.chapter__title {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: clamp(1.6rem, 1.15rem + 2.4vw, 3rem);
+  letter-spacing: 0.02em;
+  margin: 0;
+  color: $ink;
+}
+
+.chapter__years {
+  font-family: $font-hand;
+  font-size: clamp(1.2rem, 1rem + 0.7vw, 1.6rem);
+  color: $accent;
+  transform: rotate(-1.4deg);
+  display: inline-block;
+  margin-top: 0.2rem;
+}
+
+.chapter__blurb {
+  max-width: 52ch;
+  margin: 1rem auto 0;
+  color: $ink-soft;
+  font-style: italic;
+  font-family: $font-display;
+  font-size: 1.06rem;
+}
+
+// Arch rules flanking the chapter title
+.chapter__rule {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 380px;
+  margin: 1rem auto 0;
+  color: $rule-strong;
+}
+.chapter__rule::before,
+.chapter__rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+}
+.chapter__rule span {
+  font-size: 0.72rem;
+  letter-spacing: $track-wide;
+  text-transform: uppercase;
+  color: $ink-faint;
+  white-space: nowrap;
+}
+
+// =============================================================
+//  Single memory page
+// =============================================================
+.memory-hero {
+  position: relative;
+  margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+}
+
+.memory-hero .polaroid {
+  max-width: 620px;
+  margin-inline: auto;
+}
+
+.memory-title {
+  font-size: clamp(2.1rem, 1.5rem + 2.9vw, 3.6rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.35em;
+  line-height: 1.06;
+}
+
+.memory-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.4rem;
+  align-items: center;
+  font-size: 0.68rem;
+  letter-spacing: $track-medium;
+  text-transform: uppercase;
+  color: $ink-faint;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid $rule;
+  margin-bottom: 1.9rem;
+}
+.memory-meta strong { color: $ink-soft; font-weight: 600; }
+
+// Gallery inside a memory
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: clamp(1.75rem, 4vw, 2.75rem);
+  margin-block: 2.5rem;
+  list-style: none;
+  padding: 0;
+}
+
+.gallery > li { list-style: none; }
+
+// Wide photo spans the row
+.gallery--wide > li.wide { grid-column: 1 / -1; }
+
+// =============================================================
+//  Video block
+// =============================================================
+.vid {
+  position: relative;
+  margin-block: 2.25rem;
+}
+
+.vid video {
+  width: 100%;
+  display: block;
+  border-radius: $radius;
+  background: #16110c;
+}
+
+.vid figcaption {
+  margin-top: 0.7rem;
+  font-size: 0.74rem;
+  letter-spacing: $track-medium;
+  text-transform: uppercase;
+  color: $ink-faint;
+}
+
+// =============================================================
+//  Lightbox
+// =============================================================
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 3rem);
+  background: rgba(28, 22, 14, 0.93);
+  backdrop-filter: blur(3px);
+}
+.lightbox[data-open="true"] { display: grid; }
+
+.lightbox__img {
+  max-width: 100%;
+  max-height: 82vh;
+  object-fit: contain;
+  border: 10px solid $film-white;
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
+  filter: saturate(0.94) sepia(0.1);
+}
+
+.lightbox__cap {
+  margin-top: 1rem;
+  color: rgba(244, 236, 217, 0.82);
+  font-family: $font-hand;
+  font-size: 1.3rem;
+  text-align: center;
+  max-width: 46ch;
+}
+
+.lightbox__close {
+  position: absolute;
+  top: clamp(0.75rem, 2.5vw, 1.75rem);
+  right: clamp(0.75rem, 2.5vw, 1.75rem);
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: $paper;
+  background: rgba(244, 236, 217, 0.1);
+  border: 1px solid rgba(244, 236, 217, 0.3);
+  cursor: pointer;
+  transition: background $speed $ease-paper;
+}
+.lightbox__close:hover { background: rgba(244, 236, 217, 0.22); }
+
+// =============================================================
+//  Crew / roster (corkboard index-card grid)
+// =============================================================
+.crew {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+  gap: 1.5rem 1.35rem;
+}
+
+.crew__card {
+  position: relative;
+  background: $paper-light;
+  padding: 1.1rem 1.05rem 1.15rem;
+  box-shadow: 0 6px 14px -8px $film-shadow;
+  border: 1px solid rgba(42, 38, 33, 0.08);
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform $speed $ease-paper, box-shadow $speed $ease-paper;
+
+  // index-card blue line
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 1.52em,
+    rgba(42, 38, 33, 0.07) 1.52em,
+    rgba(42, 38, 33, 0.07) calc(1.52em + 1px)
+  );
+  background-position: 0 2.6em;
+}
+.crew__card:hover {
+  transform: rotate(0deg) translateY(-4px);
+  box-shadow: 0 14px 26px -12px $film-shadow;
+  z-index: 3;
+}
+
+.crew__pin {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 33% 30%, #e8796a, $accent-deep 70%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.crew__name {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 1.12rem;
+  margin: 0 0 0.2rem;
+  line-height: 1.2;
+}
+.crew__role {
+  font-size: 0.62rem;
+  letter-spacing: $track-medium;
+  text-transform: uppercase;
+  color: $accent;
+  margin: 0 0 0.5rem;
+}
+.crew__note {
+  font-family: $font-hand;
+  font-size: 1.22rem;
+  line-height: 1.2;
+  color: $ink-soft;
+  margin: 0;
+}
+
+// =============================================================
+//  Stats strip
+// =============================================================
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1px;
+  background: $rule;
+  border: 1px solid $rule;
+  margin-block: 2.5rem;
+  list-style: none;
+  padding: 0;
+}
+.stats li {
+  list-style: none;
+  background: $paper-light;
+  padding: 1.15rem 0.75rem;
+  text-align: center;
+}
+.stats__n {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.2rem);
+  line-height: 1;
+  color: $accent;
+  display: block;
+}
+.stats__l {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: $ink-faint;
+}
+
+// =============================================================
+//  Guestbook — post-it signatures on a memory page
+// =============================================================
+.signatures { margin-top: 3.25rem; }
+
+.signatures__head {
+  font-size: 1.35rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: $ink-soft;
+}
+.signatures__head::after {
+  content: "";
+  display: block;
+  width: 54px;
+  height: 1px;
+  background: $rule-strong;
+  margin: 0.75rem auto 0;
+}
+
+.signatures__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 215px), 1fr));
+  gap: 1.4rem;
+  list-style: none;
+  padding: 0;
+}
+
+.signatures__who {
+  font-size: 1.05rem !important;
+  opacity: 0.72;
+}
+
+// =============================================================
+//  Next-up footer nav
+// =============================================================
+.next-up {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid $rule;
+}
+
+.next-up__title {
+  font-family: $font-display;
+  font-size: clamp(1.35rem, 1.2rem + 0.8vw, 1.9rem);
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+.next-up__title a { text-decoration: none; }
+.next-up__title a:hover { color: $accent; }
+
+// =============================================================
+//  Empty state
+// =============================================================
+.empty {
+  text-align: center;
+  padding: clamp(2.5rem, 6vw, 4rem) 1.5rem;
+  border: 2px dashed rgba(42, 38, 33, 0.2);
+  background: rgba(251, 246, 233, 0.5);
+}
+.empty .hand { font-size: 1.6rem; color: $ink-soft; display: block; margin-bottom: 0.6rem; }
+
+// =============================================================
+//  Page entrance
+// =============================================================
+.fade-in { animation: fade-up 700ms $ease-paper both; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+// =============================================================
+//  Motion preferences
+// =============================================================
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .polaroid:hover,
+  .card:hover { transform: none; }
+}

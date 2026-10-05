@@ -1,0 +1,124 @@
+@use "variables" as *;
+
+// =============================================================
+//  Yearbook index
+// =============================================================
+.yearbook { padding-bottom: 1rem; }
+
+// ── Jump-to chips ──────────────────────────────────────────────────
+.jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.jump__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: $ink-soft;
+  background: $paper-light;
+  border: 1.5px solid rgba(42, 38, 33, 0.22);
+  padding: 0.42em 0.75em;
+  box-shadow: 2px 2px 0 rgba(42, 38, 33, 0.1);
+  transition: transform 200ms $ease-paper, box-shadow 200ms $ease-paper,
+              color $speed $ease-paper, background $speed $ease-paper;
+}
+
+.jump__chip:hover {
+  color: $accent;
+  background: $ink;
+  transform: translate(-1px, -2px);
+  box-shadow: 3px 4px 0 rgba(42, 38, 33, 0.16);
+}
+
+.jump__n {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 0.8rem;
+  color: $accent;
+  background: rgba(184, 73, 42, 0.12);
+  border-radius: 999px;
+  min-width: 1.5em;
+  padding-inline: 0.35em;
+  text-align: center;
+  line-height: 1.5;
+}
+.jump__chip:hover .jump__n { color: $ink; background: rgba(255, 252, 240, 0.9); }
+
+// ── Chapter blocks ─────────────────────────────────────────────────
+.chapter-block {
+  padding-top: clamp(1rem, 3vw, 2rem);
+  scroll-margin-top: 5rem;
+
+  // Faint horizontal rule so chapters feel like separate pages
+  & + &::before {
+    content: "";
+    display: block;
+    max-width: 140px;
+    height: 1px;
+    margin: 0 auto clamp(1rem, 3vw, 2rem);
+    background: $rule;
+    transform: translateX(-70px);
+  }
+}
+
+// Subtle offset for every other card — photos tossed on a desk
+.nudge-d { transform: translateY(1.75rem); }
+.nudge-u { transform: translateY(-0.75rem); }
+
+@media (max-width: $bp-md) {
+  .nudge-d, .nudge-u { transform: none; }
+}
+
+// ── Crew page ──────────────────────────────────────────────────────
+.crew-intro {
+  max-width: 56ch;
+  color: $ink-soft;
+  font-style: italic;
+  font-family: $font-display;
+  font-size: 1.08rem;
+  margin-bottom: 2.5rem;
+}
+
+.crew__section {
+  margin-block: clamp(2.5rem, 6vw, 4rem);
+}
+
+.crew__section-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+}
+.crew__section-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: $rule;
+}
+
+// Documentation blocks on the About page
+.doc-block {
+  margin-block: 2.5rem;
+  padding: 1.35rem 1.5rem 1.5rem;
+  background: rgba(251, 246, 233, 0.72);
+  border: 1px solid $rule;
+  border-left: 3px solid $accent;
+}
+
+.doc-block h3 {
+  margin-top: 0;
+  font-size: 1.15rem;
+}
+
+.doc-block pre { background: $paper-light; }
+.doc-block p { font-size: 0.95rem; }
+.doc-block ul, .doc-block ol { font-size: 0.95rem; }

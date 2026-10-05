@@ -1,0 +1,54 @@
+{%- comment -%}
+  Memory card for the index / yearbook grids.
+
+  Params: memory (required)
+{%- endcomment -%}
+{%- assign m = include.memory -%}
+
+{%- comment -%}
+  _data/sections.yml is a LIST, not a hash, so site.data.sections[key]
+  is always nil. Match the chapter by key instead.
+{%- endcomment -%}
+{%- assign section = nil -%}
+{%- for s in site.data.sections -%}
+  {%- if s.key == m.section -%}{%- assign section = s -%}{%- endif -%}
+{%- endfor -%}
+
+{%- assign cover = m.cover -%}
+{%- if cover == nil or cover == empty -%}
+  {%- if m.photos and m.photos.size > 0 -%}
+    {%- assign cover = m.photos[0] -%}
+  {%- endif -%}
+{%- endif -%}
+
+<a class="card" href="{{ m.url | relative_url }}">
+  <div class="card__media">
+    <div class="film film--grain film--leak">
+      {%- if cover -%}
+      <img src="{{ cover.src | relative_url }}"
+           alt="{{ cover.alt | default: m.title | escape }}"
+           loading="lazy" decoding="async" width="800" height="1000">
+      {%- else -%}
+      <img src="{{ '/assets/img/placeholder.svg' | relative_url }}"
+           alt="" loading="lazy" decoding="async" width="800" height="1000">
+      {%- endif -%}
+    </div>
+
+    {%- if m.video %}
+    <span class="card__badge card__badge--video">Video</span>
+    {%- elsif m.featured %}
+    <span class="card__badge">Keeper</span>
+    {%- endif -%}
+  </div>
+
+  <div class="card__meta">
+    <span class="card__section">{{ section.title | default: 'Miscellaneous' }}</span>
+    <h3 class="card__title">{{ m.title }}</h3>
+    <span class="card__date">
+      {%- if m.date -%}
+        {{ m.date | date: "%b %-d, %Y" }}
+      {%- endif -%}
+      {%- if m.place %} &middot; {{ m.place }}{% endif -%}
+    </span>
+  </div>
+</a>

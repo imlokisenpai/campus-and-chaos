@@ -1,0 +1,74 @@
+title: "Campus & Chaos"
+tagline: "Four years, one group chat, and a hundred stories nobody else remembers."
+description: >-
+  The shared yearbook for Loki and the ATSMU '23 batch — photos, videos and the
+  small moments that didn't make it into the real one. Built with Jekyll on GitHub Pages.
+college: "ATSMU"
+batch_year: 2023
+class_year: 2023
+curator: "Loki"
+curator_note: "Kept this together on a laptop with a cracked hinge."
+years_spanned: "2019 — 2023"
+cohort_size: 34
+github_repo: "https://github.com/imlokisenpai/campus-and-chaos"
+
+# ── Where the site lives ────────────────────────────────────────────
+# Set by GitHub automatically; leave as-is.
+url: ""
+baseurl: ""
+
+# ── Social / meta ───────────────────────────────────────────────────
+email: ""
+instagram_handle: ""
+
+# ── Build ───────────────────────────────────────────────────────────
+theme: null
+markdown: kramdown
+highlighter: rouge
+permalink: /about/
+
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+
+sass:
+  style: compressed
+  sass_dir: _sass
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+feed:
+  disable_in_head: true
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - README.md
+  - .github
+  - script
+  - node_modules
+
+# ── Collections ─────────────────────────────────────────────────────
+collections:
+  memories:
+    output: true
+    permalink: /memory/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: memories
+    values:
+      layout: memory
+      section: misc
+      # Quoted: an unquoted YAML date here becomes a Date object that
+      # Jekyll then tries to re-parse as a String and crashes on.
+      date: "2023-06-14"
+  - scope:
+      path: ""
+    values:
+      layout: page

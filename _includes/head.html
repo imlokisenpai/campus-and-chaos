@@ -1,0 +1,52 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{%- comment -%}
+  Page-specific description. Falls back to the site tagline.
+{%- endcomment -%}
+{%- assign page_desc = page.description | default: site.description | strip_html | normalize_whitespace -%}
+{%- assign page_title = page.title | default: site.title -%}
+{%- if page.title -%}
+  {%- assign full_title = page.title | append: " · " | append: site.title -%}
+{%- else -%}
+  {%- assign full_title = site.title | append: " · " | append: site.college | append: " " | append: site.batch_year -%}
+{%- endif -%}
+
+<title>{{ full_title | escape }}</title>
+<meta name="description" content="{{ page_desc | escape | truncate: 200 }}">
+
+{%- comment -%} Canonical + Open Graph {%- endcomment -%}
+<meta property="og:type" content="{% if page.layout == 'memory' %}article{% else %}website{% endif %}">
+<meta property="og:title" content="{{ page_title | escape }}">
+<meta property="og:description" content="{{ page_desc | escape | truncate: 200 }}">
+<meta property="og:site_name" content="{{ site.title | escape }}">
+<meta property="og:url" content="{{ page.url | absolute_url }}">
+{%- if page.cover %}
+<meta property="og:image" content="{{ page.cover.src | absolute_url | uri_escape }}">
+{%- elsif page.hero_photo %}
+<meta property="og:image" content="{{ page.hero_photo.src | absolute_url | uri_escape }}">
+{%- elsif site.og_image %}
+<meta property="og:image" content="{{ site.og_image | absolute_url | uri_escape }}">
+{%- endif %}
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="canonical" href="{{ page.url | absolute_url }}">
+
+<link rel="icon" href="{{ '/assets/img/favicon.svg' | relative_url }}" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ '/feed.xml' | absolute_url }}">
+
+{%- comment -%}
+  Fonts: Playfair Display (yearbook display), Lora (body serif),
+  Caveat (handwriting). Swap these out in _config.yml if you'd rather
+  self-host, so the site still works offline / in class.
+{%- endcomment -%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap">
+
+<link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+{%- feed_meta %}
+
+{%- if page.noindex %}
+<meta name="robots" content="noindex, nofollow">
+{%- endif %}

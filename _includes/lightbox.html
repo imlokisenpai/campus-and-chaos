@@ -1,0 +1,11 @@
+{%- comment -%}
+  Click-to-zoom lightbox. One instance per page; JS fills in the
+  image + caption from whatever [data-full] you click.
+{%- endcomment -%}
+<div class="lightbox" id="lightbox" data-open="false" role="dialog" aria-modal="true" aria-label="Enlarged photo">
+  <button class="lightbox__close" type="button" aria-label="Close">&times;</button>
+  <div>
+    <img class="lightbox__img" src="" alt="">
+    <p class="lightbox__cap"></p>
+  </div>
+</div>

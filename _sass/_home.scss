@@ -1,0 +1,207 @@
+@use "variables" as *;
+
+// =============================================================
+//  Home — the yearbook cover
+// =============================================================
+.home__block { margin-block: clamp(3rem, 8vw, 5.5rem); }
+
+.block-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid $rule;
+}
+
+.block-head h2 { margin: 0; }
+.block-head__note { color: $ink-faint; font-size: 1.25rem; transform: rotate(-1.2deg); }
+
+// ── Cover ──────────────────────────────────────────────────────────
+.cover {
+  padding-block: clamp(2rem, 5vw, 3.5rem) clamp(1rem, 3vw, 2rem);
+  position: relative;
+}
+
+.cover__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.cover__title {
+  font-size: clamp(3rem, 1.6rem + 6.6vw, 6.2rem);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  margin-bottom: 0.3em;
+}
+
+.cover__amp {
+  display: block;
+  font-style: italic;
+  font-weight: 400;
+  color: $accent;
+  font-size: 0.52em;
+  line-height: 0.7;
+  letter-spacing: 0;
+  margin-block: -0.06em 0.02em;
+}
+
+.cover__sub {
+  font-family: $font-display;
+  font-style: italic;
+  font-size: clamp(1.1rem, 1rem + 0.6vw, 1.42rem);
+  line-height: 1.5;
+  color: $ink-soft;
+  max-width: 34ch;
+  margin-bottom: 0.6rem;
+}
+
+.cover__scrawl {
+  color: $accent;
+  font-size: 1.35rem;
+  transform: rotate(-1.8deg);
+  margin-bottom: 1.5rem;
+}
+
+// ── Cover: overlapping print stack ─────────────────────────────────
+// Children are absolutely positioned so they don't contribute height,
+// which means this box has to be tall enough for the lowest print
+// or the stats strip rides up underneath it.
+.cover__stack {
+  position: relative;
+  min-height: 460px;
+}
+
+.stack__item {
+  position: absolute;
+  width: min(63%, 250px);
+  transition: transform 500ms $ease-paper;
+}
+
+.stack__item--1 { top: 0;     left: 6%;  z-index: 3; transform: rotate(-4.5deg); }
+.stack__item--2 { top: 96px;  left: 33%; z-index: 2; transform: rotate(3.5deg); }
+.stack__item--3 { top: 192px; left: 12%; z-index: 1; transform: rotate(-1.2deg); }
+
+.cover__stack:hover .stack__item--1 { transform: rotate(-6.5deg) translate(-6px, -6px); }
+.cover__stack:hover .stack__item--2 { transform: rotate(5deg) translate(6px, -4px); }
+.cover__stack:hover .stack__item--3 { transform: rotate(-0.5deg) translate(-3px, 6px); }
+
+// ── Chapters grid ──────────────────────────────────────────────────
+.chapters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 1.25rem;
+}
+
+.chapter-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 1.35rem 1.25rem 1.2rem;
+  text-decoration: none;
+  color: inherit;
+  background: $paper-light;
+  border: 1px solid rgba(42, 38, 33, 0.12);
+  box-shadow: 3px 3px 0 rgba(42, 38, 33, 0.1);
+  transition: transform 240ms $ease-paper, box-shadow 240ms $ease-paper,
+              background $speed $ease-paper;
+
+  // tape strip on the top-left corner
+  &::before {
+    content: "";
+    position: absolute;
+    top: -9px;
+    left: -8px;
+    width: 54px;
+    height: 18px;
+    background: $tape;
+    border-left: 1px solid $tape-edge;
+    border-right: 1px solid $tape-edge;
+    transform: rotate(-38deg);
+  }
+}
+
+.chapter-tile:hover {
+  color: inherit;
+  transform: translate(-2px, -3px);
+  box-shadow: 5px 6px 0 rgba(42, 38, 33, 0.14);
+  background: #fffdf6;
+}
+
+.chapter-tile__num {
+  font-family: $font-display;
+  font-weight: 900;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(184, 73, 42, 0.5);
+  margin-bottom: 0.35rem;
+}
+
+.chapter-tile__title {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 1.2rem;
+  line-height: 1.18;
+  margin-bottom: 0.2rem;
+}
+
+.chapter-tile__years {
+  font-family: $font-hand;
+  font-size: 1.2rem;
+  color: $accent;
+  line-height: 1.1;
+}
+
+.chapter-tile__count {
+  margin-top: 0.7rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $ink-faint;
+}
+
+// ── Contribute ─────────────────────────────────────────────────────
+.contribute {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(1.75rem, 4vw, 3.25rem);
+  align-items: start;
+}
+
+.contribute__copy h2 { margin-bottom: 0.4em; }
+.contribute__copy p { color: $ink-soft; max-width: 52ch; }
+.contribute__notes { transform: rotate(1.4deg); }
+
+// ── Responsive ─────────────────────────────────────────────────────
+@media (max-width: $bp-md) {
+  .cover__inner {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .cover__stack {
+    min-height: 390px;
+    max-width: 420px;
+    margin-inline: auto;
+    width: 100%;
+  }
+  .stack__item { width: min(52%, 215px); }
+  .stack__item--1 { left: 2%; }
+  .stack__item--2 { top: 78px;  left: 34%; }
+  .stack__item--3 { top: 156px; left: 8%; }
+  .contribute { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .cover__stack { min-height: 330px; }
+  .stack__item { width: min(60%, 180px); }
+  .stack__item--1 { left: 2%; }
+  .stack__item--2 { top: 64px;  left: 34%; }
+  .stack__item--3 { top: 128px; left: 8%; }
+}

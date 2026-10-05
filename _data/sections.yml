@@ -1,0 +1,66 @@
+# =============================================================
+#  Chapters of the yearbook.
+#
+#  `key`      → the section name you put in a memory's frontmatter
+#  `title`    → what it looks like on the page
+#  `years`    → the little handwritten line under the title
+#  `blurb`    → one sentence, italic, yearbook-ish
+#  `order`    → 'asc' (default, oldest first) or 'desc'
+#  `hidden`   → true to keep it off the jump nav & homepage
+# =============================================================
+
+- key: freshers
+  title: Freshers Week
+  years: "August 2019"
+  blurb: >-
+    Everyone pretending to be confident. The day we all realised the hostel
+    Wi-Fi was a rumour.
+
+- key: first-year
+  title: First Year
+  years: "2019 — 2020"
+  blurb: >-
+    Fresh notebooks, bad attendance, and a shared playlist that carried us
+    through the whole semester.
+
+- key: second-year
+  title: Second Year
+  years: "2020 — 2021"
+  blurb: >-
+    The year everything got weird. We got closer precisely because we
+    couldn't hang out.
+
+- key: third-year
+  title: Third Year
+  years: "2021 — 2022"
+  blurb: >-
+    Back on campus, sunburnt and slightly unbearable. Peak group-chat era.
+
+- key: final-year
+  title: The Final Stretch
+  years: "2022 — 2023"
+  blurb: >-
+    Placements, project deadlines, and pretending we'd have time to say
+    goodbye properly. (We didn't.)
+
+- key: graduation
+  title: Graduation
+  years: "June 2023"
+  blurb: >-
+    The last morning on campus. Nobody knew what to say, so we took about
+    four hundred photos instead.
+
+- key: after
+  title: After We Left
+  years: "2023 — "
+  blurb: >-
+    Different cities, one group chat. Proof we didn't quietly forget
+    each other.
+
+- key: misc
+  title: Odd Corners
+  years: "undated, allegedly"
+  blurb: >-
+    The ones with no date, no caption, and a deeply unserious explanation.
+    Every batch has a drawer full of these.
+  hidden: false

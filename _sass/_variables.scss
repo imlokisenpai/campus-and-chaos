@@ -1,0 +1,61 @@
+// =============================================================
+//  Campus & Chaos — design tokens
+//  Warm paper · film photography · yearbook · handwriting
+// =============================================================
+
+// ── Paper & ink ────────────────────────────────────────────────────
+$paper:        #f4ecd9;
+$paper-warm:   #efe5cd;
+$paper-deep:   #e6d9bd;
+$paper-edge:   #dccdae;
+$paper-light:  #fbf6e9;
+
+$ink:          #2a2621;
+$ink-soft:     #6d6355;
+// Tuned so small text (dates, labels, colophon) clears WCAG AA on
+// $paper and $paper-light — the originals were around 2.6:1.
+$ink-faint:    #706655;
+$ink-ghost:    rgba(42, 38, 33, 0.06);
+
+// ── Accents ────────────────────────────────────────────────────────
+$accent:       #b04326;   // yearbook crimson / date-stamp orange
+$accent-deep:  #8f3419;
+$gold:         #856314;   // college gold
+$college-green: #55663f;
+$blue-faint:   #46607a;
+
+// ── Film / photo ───────────────────────────────────────────────────
+$film-white:   #fdfbf5;
+$film-shadow:  rgba(64, 52, 34, 0.26);
+$tape:         rgba(255, 250, 219, 0.55);
+$tape-edge:    rgba(196, 176, 122, 0.42);
+
+$vignette:     rgba(58, 42, 22, 0.34);
+$lightleak:    rgba(255, 176, 84, 0.20);
+
+// ── Rules ──────────────────────────────────────────────────────────
+$rule:         rgba(42, 38, 33, 0.13);
+$rule-strong:  rgba(42, 38, 33, 0.26);
+
+// ── Type ───────────────────────────────────────────────────────────
+$font-display: "Playfair Display", "Iowan Old Style", "Palatino Linotype",
+               Palatino, Georgia, serif;
+$font-body:    "Lora", "Iowan Old Style", Georgia, "Times New Roman", serif;
+$font-hand:    "Caveat", "Bradley Hand", "Segoe Script", cursive;
+
+$track-wide:   0.16em;
+$track-medium: 0.08em;
+
+// ── Metrics ────────────────────────────────────────────────────────
+$radius:       3px;
+$gutter:       clamp(1.15rem, 4vw, 2.75rem);
+$measure:      68ch;
+
+$bp-sm:  560px;
+$bp-md:  780px;
+$bp-lg:  1040px;
+$bp-xl:  1280px;
+
+// ── Motion ─────────────────────────────────────────────────────────
+$ease-paper: cubic-bezier(0.22, 0.61, 0.36, 1);
+$speed:      260ms;

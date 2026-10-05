@@ -1,0 +1,34 @@
+---
+layout: default
+---
+<article class="wrap wrap--narrow fade-in">
+  <header class="page-head">
+    {%- if page.eyebrow %}<span class="eyebrow">{{ page.eyebrow }}</span>{% endif -%}
+    <h1>{{ page.title }}</h1>
+    {%- if page.lede %}<p class="lede">{{ page.lede }}</p>{% endif -%}
+    <hr class="rule-double">
+  </header>
+
+  {%- comment -%} Optional hand-written scrawl sitting under the head {%- endcomment -%}
+  {%- if page.margin_note %}
+  <p class="hand annotation annotation--bl" style="position: static; transform: rotate(-1.5deg); margin: -1rem 0 2.25rem; max-width: 26ch;">
+    {{ page.margin_note }}
+  </p>
+  {%- endif -%}
+
+  {%- if page.hero_photo %}
+  <div style="margin-bottom: 2.75rem;">
+    {%- include polaroid.html photo=page.hero_photo -%}
+    {%- if page.margin_note %}
+    <svg class="squiggle" viewBox="0 0 60 40" aria-hidden="true"
+         style="position: relative; top: -2.2rem; left: 2rem; rotate: -8deg;">
+      <path d="M56 4 C 40 6, 22 12, 12 26 M12 26 l 4 -9 M12 26 l 9 1"/>
+    </svg>
+    {%- endif %}
+  </div>
+  {%- endif %}
+
+  <div class="prose">
+    {{ content }}
+  </div>
+</article>

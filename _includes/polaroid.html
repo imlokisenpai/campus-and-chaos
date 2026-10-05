@@ -1,0 +1,44 @@
+{%- comment -%}
+  Renders a single photo as a taped-down polaroid.
+
+  Params:
+    photo  (required) — hash: src / alt / caption / tilt / tape / dateback / lightbox / eager
+    link   (optional) — wrap the whole print in an <a>
+
+  `eager: true` skips lazy-loading (use for above-the-fold hero shots).
+  Set `lightbox: false` to keep a photo out of the click-to-zoom gallery.
+{%- endcomment -%}
+
+{%- assign p = include.photo -%}
+{%- assign photo_loading = 'lazy' -%}
+{%- if p.eager -%}{%- assign photo_loading = 'eager' -%}{%- endif -%}
+
+{%- capture polaroid_body -%}
+  {%- if p.tape != false %}
+  <span class="tape tape--{{ p.tape | default: 'tl' }}" aria-hidden="true"></span>
+  {%- endif %}
+
+  <div class="polaroid__frame">
+    <div class="film film--grain film--leak">
+      <img src="{{ p.src | relative_url }}"
+           alt="{{ p.alt | default: p.caption | default: 'A memory from our college days' }}"
+           loading="{{ photo_loading }}" decoding="async"
+           {%- if p.lightbox != false %} data-full="{{ p.src | relative_url }}"{% endif %}
+           width="900" height="1125">
+    </div>
+
+    {%- if p.dateback %}
+    <span class="dateback" aria-hidden="true">{{ p.dateback }}</span>
+    {%- endif %}
+  </div>
+
+  {%- if p.caption %}
+  <div class="polaroid__cap">{{ p.caption }}</div>
+  {%- endif %}
+{%- endcapture -%}
+
+{%- if include.link -%}
+<a class="polaroid polaroid--{{ p.tilt | default: 'tilt-l' }}" href="{{ include.link | relative_url }}">{{ polaroid_body }}</a>
+{%- else -%}
+<div class="polaroid polaroid--{{ p.tilt | default: 'tilt-l' }}">{{ polaroid_body }}</div>
+{%- endif -%}

@@ -1,0 +1,86 @@
+# =============================================================
+#  The roster — ATSMU batch of 2023.
+#
+#  ⚠️  THESE ARE PLACEHOLDERS. Replace the names with your actual
+#      friends, or delete the ones you don't want listed. It lives
+#      in one file so it's a 2-minute edit, not a rebuild.
+#
+#  name     → display name
+#  role     → small label under the name (nickname, dept, role)
+#  note     → the handwritten scrawl on their index card
+#  group    → organisers | witnesses | everyone  (omit → "everyone")
+#             see _data/crew_groups.yml for the headings
+#  tilt     → rotation: tilt-l, tilt-r, tilt-lb, tilt-rb
+# =============================================================
+
+- name: "Loki"
+  role: "Compiler of this thing"
+  note: "Kept everyone's secrets. Lost the folder twice."
+  group: organisers
+  tilt: tilt-r
+
+- name: "Aarav Mehta"
+  role: "Hostel corridor, room 214"
+  note: "Could fix your laptop, your bike, or your life. In that order."
+  group: everyone
+  tilt: tilt-l
+
+- name: "Priya Nair"
+  role: "Library, 3rd floor, always"
+  note: "Knows every due date on campus. Has never once been late."
+  group: witnesses
+  tilt: tilt-lb
+
+- name: "Rohan Dsouza"
+  role: "The one with the camera"
+  note: "Half the photos here are his. He will deny it for years."
+  group: witnesses
+  tilt: tilt-rb
+
+- name: "Ishita Bose"
+  role: "Design dept"
+  note: "Made the poster for everything, including things nobody asked for."
+  group: everyone
+  tilt: tilt-l
+
+- name: "Kabir Shah"
+  role: "Futsal, wing, chaos"
+  note: "Refuses to wear a jersey. Refuses to pass. Legend anyway."
+  group: everyone
+  tilt: tilt-r
+
+- name: "Ananya Iyer"
+  role: "Night canteen regular"
+  note: "Could find out what everyone was doing at 2am. Somehow always did."
+  group: witnesses
+  tilt: tilt-lb
+
+- name: "Dev Menon"
+  role: "Laptop held together with tape"
+  note: "Projected every single presentation. Nobody thanked him. We're fixing that."
+  group: witnesses
+  tilt: tilt-rb
+
+- name: "Sneha Rao"
+  role: "Fresher, first year, first friend"
+  note: "Remembered everyone's birthday. Including the ones we forgot."
+  group: everyone
+  tilt: tilt-l
+
+- name: "Yash Chourasia"
+  role: "The long drive"
+  note: "Any memory that smells like highway chai is probably his fault."
+  group: everyone
+  tilt: tilt-r
+
+- name: "Fatima Sheikh"
+  role: "Library, group 3"
+  note: "Turned every assignment into a group project. On purpose."
+  group: everyone
+  tilt: tilt-lb
+
+- name: "Nikhil Varma"
+  role: "Bike, one working brake"
+  note: "Twelve people, one helmet, no regrets (several)."
+  group: everyone
+  tilt: tilt-rb

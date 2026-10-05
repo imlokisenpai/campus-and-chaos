@@ -1,0 +1,12 @@
+# How the roster is grouped on the Crew page.
+# Add a `group:` key to a person in _data/crew.yml to file them here.
+# Anyone without a `group:` appears under "Everyone Else".
+
+- key: organisers
+  title: "The Organisers"
+
+- key: witnesses
+  title: "The Witnesses"
+
+- key: everyone
+  title: "Everyone Else"

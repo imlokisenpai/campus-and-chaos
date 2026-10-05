@@ -1,0 +1,129 @@
+---
+layout: default
+---
+{%- assign m = page -%}
+{%- assign section = site.data.sections[m.section] -%}
+
+<article class="wrap fade-in">
+
+  {%- comment -%} ── Chapter breadcrumb ──{% endcomment -%}
+  <p style="margin-bottom: 1.5rem;">
+    <a class="doodle-link" href="{{ '/yearbook/' | relative_url }}#{{ m.section }}">
+      &larr; {{ section.title | default: 'Miscellaneous' }}
+    </a>
+  </p>
+
+  <header class="memory-head">
+    <h1 class="memory-title">{{ m.title }}</h1>
+
+    <div class="memory-meta">
+      {%- if m.date %}<span><strong>When</strong> {{ m.date | date: "%A, %B %-d, %Y" }}</span>{% endif -%}
+      {%- if m.place %}<span><strong>Where</strong> {{ m.place }}</span>{% endif -%}
+      {%- if m.camera %}<span><strong>Shot on</strong> {{ m.camera }}</span>{% endif -%}
+      {%- if m.people and m.people.size > 0 %}
+      <span><strong>With</strong> {{ m.people | join: ", " }}</span>
+      {%- endif -%}
+    </div>
+  </header>
+
+  {%- comment -%} ── Hero polaroid ──{% endcomment -%}
+  {%- if m.cover -%}
+    {%- assign hero = m.cover -%}
+  {%- elsif m.photos and m.photos.size > 0 -%}
+    {%- assign hero = m.photos[0] -%}
+  {%- endif -%}
+
+  {%- if hero %}
+  <div class="memory-hero" style="position: relative;">
+    {%- comment -%} strip the hero out of the gallery loop so it doesn't repeat {%- endcomment -%}
+    {%- assign rest_photos = "" | split: "" -%}
+    {%- if m.photos -%}
+      {%- for p in m.photos -%}
+        {%- unless p.src == hero.src -%}
+          {%- assign rest_photos = rest_photos | push: p -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    {%- endif -%}
+
+    {%- include polaroid.html photo=hero -%}
+
+    {%- comment -%} The owner's handwritten note, pinned to the print {%- endcomment -%}
+    {%- if m.note %}
+    <span class="annotation annotation--{{ m.note_color | default: 'red' }}"
+          style="top: auto; bottom: -1.9rem; left: auto; right: -0.4rem; max-width: 18ch;">{{ m.note }}</span>
+    {%- endif %}
+  </div>
+  {%- endif -%}
+
+  {%- comment -%} ── The write-up ──{% endcomment -%}
+  <div class="prose">
+    {{ content }}
+  </div>
+
+  {%- comment -%} ── More photos ──{% endcomment -%}
+  {%- if rest_photos and rest_photos.size > 0 %}
+  <ul class="gallery" style="margin-bottom: 2rem;">
+    {%- for p in rest_photos -%}
+    <li class="{% if p.wide %}wide{% endif %}">
+      {%- include polaroid.html photo=p -%}
+    </li>
+    {%- endfor -%}
+  </ul>
+  {%- endif -%}
+
+  {%- comment -%} ── Video ──{% endcomment -%}
+  {%- if m.video %}
+  <figure class="vid">
+    <div class="film film--grain">
+      <video controls preload="none" playsinline
+             {% if m.video.poster %}poster="{{ m.video.poster | relative_url }}"{% endif %}>
+        <source src="{{ m.video.src | relative_url }}" type="video/mp4">
+        <p>Your browser can't play this video.
+          <a href="{{ m.video.src | relative_url }}">Download it instead.</a></p>
+      </video>
+    </div>
+    {%- if m.video.caption %}
+    <figcaption>{{ m.video.caption }}</figcaption>
+    {%- endif %}
+  </figure>
+  {%- endif -%}
+
+  {%- comment -%} ── Guestbook: friends sign the page ──{% endcomment -%}
+  {%- if m.signatures and m.signatures.size > 0 %}
+  <section class="signatures">
+    <h2 class="signatures__head">Signed by</h2>
+    <div class="signatures__grid">
+      {%- comment -%} Only the tints, not the base "postit" class {%- endcomment -%}
+  {%- assign tints = "postit--blue postit--mint postit--pink postit" | split: " " -%}
+  {%- for sig in m.signatures -%}
+      {%- assign tint_idx = forloop.index0 | modulo: 4 -%}
+      <div class="postit {{ tints[tint_idx] }}">
+        <p>{{ sig.note }}</p>
+        <p class="signatures__who">&mdash; {{ sig.name }}</p>
+      </div>
+      {%- endfor -%}
+    </div>
+  </section>
+  {%- endif %}
+
+  {%- comment -%} ── Next memory ──{% endcomment -%}
+  {%- assign memories = site.memories | where_exp: "x", "x.draft != true" | sort: "date" -%}
+  {%- assign next = nil -%}
+  {%- for i in (0..memories.size) -%}
+    {%- if memories[i].url == m.url -%}
+      {%- assign next_idx = i | plus: 1 -%}
+      {%- assign nxt = memories[next_idx] -%}
+      {%- if nxt -%}{%- assign next = nxt -%}{%- endif -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if next %}
+  <nav class="next-up">
+    <span class="eyebrow">Next memory</span>
+    <p class="next-up__title">
+      <a href="{{ next.url | relative_url }}">{{ next.title }}</a>
+    </p>
+  </nav>
+  {%- endif %}
+
+</article>

@@ -1,0 +1,27 @@
+<footer class="colophon">
+  <div class="wrap colophon__inner">
+    <div>
+      <p class="colophon__mark">{{ site.title }} &mdash; {{ site.college }} &middot; Batch of {{ site.batch_year }}</p>
+      <p>
+        Compiled by <strong>{{ site.curator }}</strong> and friends, {{ site.years_spanned }}.
+        Every photo belongs to whoever brought it.
+      </p>
+      <p class="colophon__note">{{ site.curator_note }}</p>
+    </div>
+
+    <div>
+      <div class="colophon__meta">
+        <a href="{{ '/yearbook/' | relative_url }}">The Yearbook</a>
+        <a href="{{ '/about/' | relative_url }}">About &amp; Credits</a>
+        <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
+        {%- if site.github_repo %}
+        <a href="{{ site.github_repo }}" rel="noopener">GitHub</a>
+        {%- endif %}
+      </div>
+      <p style="margin-top:0.9rem; max-width:34ch;">
+        Set in Playfair Display &amp; Lora. Handwriting is Caveat.
+        Built with Jekyll &mdash; no trackers, no accounts, nothing sold.
+      </p>
+    </div>
+  </div>
+</footer>

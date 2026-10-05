@@ -1,0 +1,113 @@
+---
+layout: default
+---
+{%- assign chapters = site.data.sections -%}
+{%- assign memories = site.memories | where_exp: "m", "m.draft != true" | sort: "date" -%}
+
+<div class="yearbook">
+
+  <header class="page-head wrap">
+    <span class="eyebrow">{{ page.eyebrow }}</span>
+    <h1>{{ page.title }}</h1>
+    {%- if page.lede %}<p class="lede">{{ page.lede }}</p>{% endif -%}
+    <hr class="rule-double">
+  </header>
+
+  {%- comment -%} ══ Jump-to nav (corkboard index) ══{% endcomment -%}
+  <nav class="jump wrap" aria-label="Chapters">
+    {%- for s in chapters -%}
+      {%- if s.hidden != true -%}
+        {%- assign n = memories | where: "section", s.key | size -%}
+      <a class="jump__chip" href="#{{ s.key }}">
+        <span>{{ s.title }}</span>
+        <span class="jump__n">{{ n }}</span>
+      </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </nav>
+
+  {%- comment -%} ══ Chapters ══{% endcomment -%}
+  {%- for s in chapters -%}
+    {%- if s.hidden != true -%}
+      {%- assign in_section = memories | where: "section", s.key -%}
+      {%- assign reverse_it = s.order | default: "asc" -%}
+      {%- if reverse_it == "desc" -%}
+        {%- assign in_section = in_section | sort: "date" | reverse -%}
+      {%- else -%}
+        {%- assign in_section = in_section | sort: "date" -%}
+      {%- endif -%}
+
+  <section class="chapter-block" id="{{ s.key }}">
+    <div class="wrap">
+      <header class="chapter">
+        <span class="chapter__num">{{ forloop.index | prepend: "0" | slice: -2, 2 }}</span>
+        <h2 class="chapter__title">{{ s.title }}</h2>
+        {%- if s.years %}
+        <span class="chapter__years">{{ s.years }}</span>
+        {%- endif %}
+        <div class="chapter__rule"><span>{{ in_section.size }} {% if in_section.size == 1 %}memory{% else %}memories{% endif %}</span></div>
+        {%- if s.blurb %}
+        <p class="chapter__blurb">{{ s.blurb }}</p>
+        {%- endif %}
+      </header>
+
+      {%- if in_section.size > 0 -%}
+        {%- comment -%} Offset every other card so the grid reads as tossed on a desk {%- endcomment -%}
+        <ul class="grid-memories">
+          {%- for m in in_section -%}
+          {%- assign mod3 = forloop.index0 | modulo: 3 -%}
+          <li class="{% if mod3 == 1 %}nudge-d{% elsif mod3 == 2 %}nudge-u{% endif %}">
+            {% include memory-card.html memory=m %}
+          </li>
+          {%- endfor -%}
+        </ul>
+      {%- else -%}
+        <div class="empty">
+          <span class="hand">nothing here yet &mdash; this chapter is unwritten</span>
+          <p style="font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase; color: #9c9184;">
+            Be the first to fill it in
+          </p>
+        </div>
+      {%- endif %}
+    </div>
+  </section>
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- comment -%}
+  ══ Everything else: memories whose `section` doesn't match any
+  chapter key in _data/sections.yml. Liquid can't index the
+  sections list by key, so build a key list and compare.
+{%- endcomment -%}
+{%- assign sec_keys = "" | split: "" -%}
+{%- for s in chapters -%}{%- assign sec_keys = sec_keys | push: s.key -%}{%- endfor -%}
+
+{%- assign orphans = "" | split: "" -%}
+{%- for m in memories -%}
+  {%- assign matched = false -%}
+  {%- for k in sec_keys -%}
+    {%- if m.section == k -%}{%- assign matched = true -%}{%- endif -%}
+  {%- endfor -%}
+  {%- unless matched -%}{%- assign orphans = orphans | push: m -%}{%- endunless -%}
+{%- endfor -%}
+
+{%- if orphans.size > 0 -%}
+  {%- assign orphans_sorted = orphans | sort: "date" | reverse -%}
+  <section class="chapter-block" id="elsewhere">
+    <div class="wrap">
+      <header class="chapter">
+        <span class="chapter__num">&mdash;</span>
+        <h2 class="chapter__title">Filed Elsewhere</h2>
+        <span class="chapter__years">no chapter assigned yet</span>
+        <div class="chapter__rule"><span>{{ orphans.size }} {% if orphans.size == 1 %}memory{% else %}memories{% endif %}</span></div>
+      </header>
+      <ul class="grid-memories">
+        {%- for m in orphans_sorted -%}
+        <li>{% include memory-card.html memory=m %}</li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </section>
+  {%- endif -%}
+
+</div>

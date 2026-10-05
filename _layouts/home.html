@@ -1,0 +1,148 @@
+---
+layout: default
+---
+{%- assign featured = site.memories | where_exp: "m", "m.featured == true" -%}
+{%- if featured.size == 0 -%}
+  {%- assign featured = site.memories | sort: "date" | reverse | slice: 0, 8 -%}
+{%- endif -%}
+
+{%- assign photo_count = 0 -%}
+{%- assign with_video = 0 -%}
+{%- for m in site.memories -%}
+  {%- if m.photos -%}{%- assign photo_count = photo_count | plus: m.photos.size -%}{%- endif -%}
+  {%- if m.cover and m.cover.src -%}{%- endif -%}
+  {%- if m.video -%}{%- assign with_video = with_video | plus: 1 -%}{%- endif -%}
+{%- endfor -%}
+
+<div class="home">
+
+  {%- comment -%} ══ Yearbook cover ══{% endcomment -%}
+  <section class="cover">
+    <div class="wrap">
+      <div class="cover__inner">
+        <div class="cover__type">
+          <span class="eyebrow">{{ site.college }} &middot; Batch of {{ site.batch_year }}</span>
+
+          <h1 class="cover__title">
+            {{ site.title | split: '&' | first }}
+            <span class="cover__amp">&amp;</span>
+            {{ site.title | split: '&' | last }}
+          </h1>
+
+          <p class="cover__sub">{{ site.tagline }}</p>
+
+          <p class="hand cover__scrawl">&larr; our unofficial yearbook &mdash; keep scrolling</p>
+
+          <div class="btn-row">
+            <a class="btn btn--solid" href="{{ '/yearbook/' | relative_url }}">Open the yearbook</a>
+            <a class="btn" href="{{ '/about/#add' | relative_url }}">Add your memory</a>
+          </div>
+        </div>
+
+        {%- comment -%} Cluster of taped-down prints {%- endcomment -%}
+        <div class="cover__stack" aria-hidden="true">
+          {%- assign covers = site.memories | where_exp: "m", "m.cover" | sort: "date" | reverse -%}
+          {%- if covers.size > 0 -%}
+            {%- assign c0 = covers[0].cover -%}
+            {%- assign c1 = covers[1].cover -%}
+            {%- assign c2 = covers[2].cover -%}
+
+            <div class="stack__item stack__item--3">
+              {%- include polaroid.html photo=c2 -%}
+            </div>
+            <div class="stack__item stack__item--2">
+              {%- include polaroid.html photo=c1 -%}
+            </div>
+            <div class="stack__item stack__item--1">
+              {%- include polaroid.html photo=c0 -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Stats strip — yearbook flavour {%- endcomment -%}
+      <ul class="stats">
+        <li><span class="stats__n">{{ site.memories | size }}</span><span class="stats__l">Memories</span></li>
+        <li><span class="stats__n">{{ photo_count }}</span><span class="stats__l">Photos</span></li>
+        <li><span class="stats__n">{{ with_video }}</span><span class="stats__l">Videos</span></li>
+        <li><span class="stats__n">{{ site.cohort_size }}</span><span class="stats__l">In the batch</span></li>
+      </ul>
+    </div>
+  </section>
+
+  {%- comment -%} ══ Featured ══{% endcomment -%}
+  {%- if featured.size > 0 %}
+  <section class="wrap home__block">
+    <header class="block-head">
+      <h2 class="scribble-underline">The ones we kept</h2>
+      <p class="block-head__note hand">hand-picked &mdash; don't let it go to your head</p>
+    </header>
+
+    <ul class="grid-memories">
+      {%- for m in featured limit: 8 -%}
+      <li>{% include memory-card.html memory=m %}</li>
+      {%- endfor -%}
+    </ul>
+
+    <div class="btn-row" style="justify-content: center;">
+      <a class="btn" href="{{ '/yearbook/' | relative_url }}">See all {{ site.memories | size }} memories</a>
+    </div>
+  </section>
+  {%- endif -%}
+
+  {%- comment -%} ══ Chapters ══{% endcomment -%}
+  <section class="wrap home__block">
+    <header class="block-head">
+      <h2 class="scribble-underline">Chapters</h2>
+      <p class="block-head__note hand">it's organised, believe it or not</p>
+    </header>
+
+    <div class="chapters">
+      {%- assign chapters = site.data.sections | where_exp: "s", "s.hidden != true" -%}
+{%- for s in chapters -%}
+        {%- assign n = site.memories | where: "section", s.key | size -%}
+      <a class="chapter-tile" href="{{ '/yearbook/#' | append: s.key | relative_url }}">
+        <span class="chapter-tile__num">{{ forloop.index | prepend: "0" | slice: -2, 2 }}</span>
+        <span class="chapter-tile__title">{{ s.title }}</span>
+        <span class="chapter-tile__years">{{ s.years }}</span>
+        {%- comment -%} No | pluralize — some Liquid builds lack it. {%- endcomment -%}
+        <span class="chapter-tile__count">{{ n }} {% if n == 1 %}memory{% else %}memories{% endif %}</span>
+      </a>
+    {%- endfor -%}
+    </div>
+  </section>
+
+  {%- comment -%} ══ How to contribute ══{% endcomment -%}
+  <section class="wrap home__block">
+    <div class="contribute">
+      <div class="contribute__copy">
+        <span class="eyebrow">This is a group project</span>
+        <h2>Bring your own disasters</h2>
+        <p>
+          Nobody remembers everything, and that's the whole problem. If you've got a
+          photo, a 12-second clip, or a story that only makes sense to you and four
+          other people &mdash; it belongs in here.
+        </p>
+        <p>
+          Adding something takes about two minutes. You don't need to install anything;
+          you just add a file on GitHub and the site updates itself.
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--solid" href="{{ '/about/#add' | relative_url }}">How to add yours</a>
+          <a class="btn" href="{{ '/crew/' | relative_url }}">Meet the batch</a>
+        </div>
+      </div>
+
+      <div class="contribute__notes">
+        <div class="postit">
+          <p>Rules:</p>
+          <p>1. Photos over paragraphs.</p>
+          <p>2. Blur the faces you don't want immortalised.</p>
+          <p>3. Write the date, even if it's "sometime in second year".</p>
+          <p>&mdash; Loki</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
