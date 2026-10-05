@@ -10,6 +10,7 @@ permissions:
   pages: write
   id-token: write
 
+# Don't let two deploys race; keep the newest.
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -20,24 +21,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      # bundler-cache: true installs the Gemfile and caches it.
+      # This is what pins Jekyll 4.4 + sass-embedded (Dart Sass), which
+      # is required for the `@use` syntax in _sass/.
+      #
+      # Deliberately NOT using actions/jekyll-build-pages: it builds
+      # inside a container that ignores the Gemfile and falls back to
+      # Jekyll 3.x, whose Sass can't read `@use` — main.scss then ships
+      # to the site uncompiled and the whole theme dies.
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3"
           bundler-cache: true
 
-      - uses: actions/configure-pages@v5
-        id: pages
-
       - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./
-          destination: ./_site
-          jekyll-version: 4.4
+        env:
+          JEKYLL_ENV: production
+        run: >-
+          bundle exec jekyll build
+          --destination _site
+          --baseurl "${{ steps.pages.outputs.base_path }}"
+          --trace
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./_site
+          path: _site
 
   deploy:
     needs: build
